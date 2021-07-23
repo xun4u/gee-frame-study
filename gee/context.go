@@ -15,6 +15,7 @@ type Context struct {
 	Req        *http.Request
 	Path       string
 	Method     string
+	Params     map[string]string
 	StatusCode int
 }
 
@@ -36,6 +37,12 @@ func (c *Context) Query(key string) string {
 //获取表单参数
 func (c *Context) PostForm(key string) string {
 	return c.Req.FormValue(key)
+}
+
+//获取param参数
+func (c *Context) Param(key string) string {
+	value, _ := c.Params[key]
+	return value
 }
 
 //写入响应状态码
