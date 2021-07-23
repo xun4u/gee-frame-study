@@ -10,12 +10,17 @@ func main() {
 	//实例化框架
 	r := gee.New()
 	//添加路由
-	r.GET("/", func(c *gee.Context) {
-		c.HTML(http.StatusOK, "<h1>Hello</h1>")
+	r.GET("/index", func(c *gee.Context) {
+		c.HTML(http.StatusOK, "<h1>index</h1>")
 	})
-	r.GET("/hello", func(c *gee.Context) {
-		c.String(http.StatusOK, "hello %s,path:%s\n", c.Query("name"), c.Path)
-	})
+
+	//分组
+	v1 := r.Group("/v1")
+	{
+		v1.GET("/hello", func(c *gee.Context) {
+			c.String(http.StatusOK, "hello %s,path:%s\n", c.Query("name"), c.Path)
+		})
+	}
 
 	r.POST("/login", func(c *gee.Context) {
 		c.JSON(http.StatusOK, gee.H{
