@@ -9,6 +9,10 @@ func main() {
 
 	//实例化框架
 	r := gee.New()
+
+	//全局的日志中间件
+	r.Use(gee.Logger())
+
 	//添加路由
 	r.GET("/index", func(c *gee.Context) {
 		c.HTML(http.StatusOK, "<h1>index</h1>")

@@ -17,6 +17,10 @@ type Context struct {
 	Method     string
 	Params     map[string]string
 	StatusCode int
+
+	//上下文的中间件，use的时候设置中间件，请求产生的时候匹配对应分组的中间件放到上下文中
+	handlers []HandlerFunc
+	index    int
 }
 
 //实例化
@@ -26,6 +30,16 @@ func newContext(w http.ResponseWriter, req *http.Request) *Context {
 		Req:    req,
 		Path:   req.URL.Path,
 		Method: req.Method,
+		index:  -1,
+	}
+}
+
+//执行下一个中间件
+func (c *Context) Next() {
+	c.index++
+	s := len(c.handlers)
+	for ; c.index < s; c.index++ {
+		c.handlers[c.index](c)
 	}
 }
 

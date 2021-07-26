@@ -1,7 +1,6 @@
 package gee
 
 import (
-	"log"
 	"net/http"
 	"strings"
 )
@@ -38,7 +37,7 @@ func parsePattern(pattern string) []string {
 
 //增加路由条目到路由表
 func (r *router) addRoute(method string, pattern string, handler HandlerFunc) {
-	log.Printf("Route %4s - %s", method, pattern)
+	//log.Printf("Route %4s - %s", method, pattern)
 
 	parts := parsePattern(pattern)
 	key := method + "-" + pattern
@@ -86,8 +85,10 @@ func (r *router) handle(c *Context) {
 	if n != nil {
 		c.Params = params
 		key := c.Method + "-" + n.pattern
-		r.handlers[key](c)
+		//将原来对应的handler放到中间件的最后
+		c.handlers = append(c.handlers, r.handlers[key])
 	} else {
 		c.String(http.StatusNotFound, "404 NOT FOUND!!! %s\n", c.Path)
 	}
+	c.Next()
 }

@@ -3,6 +3,8 @@ package gee
 import (
 	"log"
 	"net/http"
+	"strings"
+	"time"
 )
 
 //定义路由的方法
@@ -63,8 +65,29 @@ func (e *Engine) Run(addr string) (err error) {
 	return http.ListenAndServe(addr, e)
 }
 
+//添加中间件
+func (group *RouterGroup) Use(middlewares ...HandlerFunc) {
+	group.middlewares = append(group.middlewares, middlewares...)
+}
+
 //使用自己的handler，接管所有的http请求，做统一处理
 func (e *Engine) ServeHTTP(w http.ResponseWriter, req *http.Request) {
+	var middlewares []HandlerFunc
+	for _, group := range e.groups {
+		if strings.HasPrefix(req.URL.Path, group.prefix) {
+			middlewares = append(middlewares, group.middlewares...)
+		}
+	}
 	c := newContext(w, req)
+	c.handlers = middlewares
 	e.router.handle(c)
+}
+
+//定义一个日志全局中间件，记录请求时间
+func Logger() HandlerFunc {
+	return func(c *Context) {
+		t := time.Now()
+		c.Next()
+		log.Printf("[%d] %s in %v", c.StatusCode, c.Req.RequestURI, time.Since(t))
+	}
 }
