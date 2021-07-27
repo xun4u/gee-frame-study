@@ -13,10 +13,14 @@ func main() {
 	//全局的日志中间件
 	r.Use(gee.Logger())
 
+	//静态文件
+	//r.Static("/assets", "/usr/geektutu/blog/static")
+	// 或相对路径 r.Static("/assets", "./static")
+
 	//添加路由
-	r.GET("/index", func(c *gee.Context) {
-		c.HTML(http.StatusOK, "<h1>index</h1>")
-	})
+	//r.GET("/index", func(c *gee.Context) {
+	//	c.HTML(http.StatusOK, "<h1>index</h1>")
+	//})
 
 	//分组
 	v1 := r.Group("/v1")

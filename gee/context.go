@@ -21,6 +21,8 @@ type Context struct {
 	//上下文的中间件，use的时候设置中间件，请求产生的时候匹配对应分组的中间件放到上下文中
 	handlers []HandlerFunc
 	index    int
+
+	engine *Engine
 }
 
 //实例化
@@ -94,8 +96,11 @@ func (c *Context) Data(code int, data []byte) {
 }
 
 //html响应
-func (c *Context) HTML(code int, html string) {
+func (c *Context) HTML(code int, name string, data interface{}) {
 	c.SetHeader("Content-Type", "text/html")
 	c.Status(code)
-	c.Writer.Write([]byte(html))
+
+	if err := c.engine.htmlTemplates.ExecuteTemplate(c.Writer, name, data); err != nil {
+		http.Error(c.Writer, err.Error(), 500)
+	}
 }
