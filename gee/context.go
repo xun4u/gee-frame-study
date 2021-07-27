@@ -45,6 +45,11 @@ func (c *Context) Next() {
 	}
 }
 
+func (c *Context) Fail(code int, err string) {
+	c.index = len(c.handlers)
+	c.JSON(code, H{"message": err})
+}
+
 //获取get参数
 func (c *Context) Query(key string) string {
 	return c.Req.URL.Query().Get(key)

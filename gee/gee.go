@@ -35,6 +35,13 @@ func New() *Engine {
 	return engine
 }
 
+//默认使用日志和错误中间件
+func Default() *Engine {
+	engine := New()
+	engine.Use(Logger(), Recovery())
+	return engine
+}
+
 func (e *Engine) SetFuncMap(funcMap template.FuncMap) {
 	e.funcMap = funcMap
 }

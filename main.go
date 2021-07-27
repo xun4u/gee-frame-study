@@ -8,10 +8,10 @@ import (
 func main() {
 
 	//实例化框架
-	r := gee.New()
+	r := gee.Default()
 
 	//全局的日志中间件
-	r.Use(gee.Logger())
+	//r.Use(gee.Logger())
 
 	//静态文件
 	//r.Static("/assets", "/usr/geektutu/blog/static")
@@ -26,7 +26,9 @@ func main() {
 	v1 := r.Group("/v1")
 	{
 		v1.GET("/hello", func(c *gee.Context) {
-			c.String(http.StatusOK, "hello %s,path:%s\n", c.Query("name"), c.Path)
+			names := []string{"aaa"}
+
+			c.String(http.StatusOK, "hello %s,path:%s\n", names[100], c.Path)
 		})
 	}
 
